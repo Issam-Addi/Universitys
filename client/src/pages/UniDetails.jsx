@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaPhone } from "react-icons/fa6";
-import { MdEmail } from "react-icons/md";
+import { MdEmail, MdDescription } from "react-icons/md";
 import { ImBooks } from "react-icons/im";
 import { IoLocation } from "react-icons/io5";
 import { FaBusAlt } from "react-icons/fa";
@@ -14,6 +14,10 @@ function UniDetails() {
 
     const [uni, setUni] = useState([]);
     const [street, setStreet] = useState([]);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     useEffect(() => {
         const unisData = async () => {
@@ -68,10 +72,9 @@ function UniDetails() {
                                     </p>
                                 </h3>
                             </header>
+                            <MdDescription className='text-blue-500 inline-block h-7 w-7 mr-2' />
                             <p className="text-lg text-black flex-grow overflow-y-scroll h-28 sm:h-20 lg:h-28 mb-3">
                                 {uni[0]?.university_description}
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea at maxime fugit perspiciatis a omnis facere placeat, id architecto eligendi reprehenderit eaque iusto labore sit quas odit minus nemo et!
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste ex praesentium non recusandae debitis sit. Laboriosam ipsam sit facilis fugit assumenda illo culpa, a incidunt labore vero odit velit. Harum.
                             </p>
                             <p className="text-lg text-black flex-grow mb-3">
                                 <ImBooks className='text-blue-500 inline-block h-7 w-7 mr-2' />Number of Majors: {uni[0]?.number_of_majors}

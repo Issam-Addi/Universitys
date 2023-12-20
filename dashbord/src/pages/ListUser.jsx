@@ -19,6 +19,10 @@ function ListUser() {
             .catch((error) => console.log(error.message))
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const filterDataByName = (search) => {
         const filtered = allUsers?.filter((item) =>
             item.user_name.toLowerCase().includes(search.toLowerCase())
@@ -31,32 +35,48 @@ function ListUser() {
         let text1 = ""
         let text2 = ""
         if (role === "user") {
-            text1 = `Do you want to switch ${user_name} to admin`
+            text1 = `Do you want to switch ${user_name} to admin?`
             text2 = ` ${user_name} is now an admin`
         } else {
-            text1 = `Do you want to switch ${user_name} to user`
-            text2 = ` ${user_name} is now a user `
+            text1 = `Do you want to switch ${user_name} to user?`
+            text2 = ` ${user_name} is now a user`
         }
         Swal.fire({
             title: text1,
             showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "OK",
+            confirmButtonColor: "blue",
             cancelButtonText: "Cancel",
-            icon: 'warning'
-        }
-        ).then((result) => {
+            cancelButtonColor: "red",
+            icon: "question",
+        }).then((result) => {
             if (result.isConfirmed) {
                 axios.put(`http://localhost:5000/updateUserRole/${user_id}`)
                     .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
+                        if (response.status === 200) {
+                            Swal.fire({
+                                icon: "success",
+                                title: text2,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    }).catch(function () {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Server error",
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
                     });
-                Swal.fire(text2, '', 'success');
             } else
-                Swal.fire(' Cancelled', '', 'error')
+                Swal.fire({
+                    icon: "error",
+                    title: "Cancelled",
+                    showConfirmButton: false,
+                    timer: 1000
+                });
         })
     }
 
@@ -66,19 +86,38 @@ function ListUser() {
             showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "OK",
+            confirmButtonColor: "blue",
             cancelButtonText: "Cancel",
-            icon: 'warning'
+            cancelButtonColor: "red",
+            icon: "question",
         }
         ).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire(` ${user_name} has been removed `, '', 'success');
                 axios.put(`http://localhost:5000/updateUserFlag/${user_id}`)
                     .then((response) => {
-                        console.log(response.data);
-                    })
-                    .catch((error) => console.log(error.message))
+                        if (response.status === 200) {
+                            Swal.fire({
+                                icon: "success",
+                                title: `${user_name} has been removed `,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    }).catch(function () {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Server error",
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    });
             } else
-                Swal.fire(' Cancelled', '', 'error')
+                Swal.fire({
+                    icon: "error",
+                    title: "Cancelled",
+                    showConfirmButton: false,
+                    timer: 1000
+                });
         })
     }
 
@@ -89,7 +128,6 @@ function ListUser() {
                     All users & admins
                 </h3>
             </div>
-
             <form className="relative mt-3 px-10">
                 <div className="absolute flex items-center ml-2 h-full">
                     <BsSearch className="text-blue-500" />
@@ -105,7 +143,6 @@ function ListUser() {
                     <p>No data matching your criteria</p>
                 ) : (
                     <table className="w-full">
-
                         <thead>
                             <tr className='text-blue-500'>
                                 <th className="border-b border-black pb-4 text-start">
@@ -128,7 +165,6 @@ function ListUser() {
                                 </th>
                             </tr>
                         </thead>
-
                         {filterData?.map((user) => {
                             return (
                                 <tbody>
@@ -182,25 +218,22 @@ function ListUser() {
                                             <button className="ml-6"
                                                 onClick={() => handleUpdate(user.user_id, user.user_type, user.user_name)}
                                             >
-                                                <FaEdit className='w-6 h-6 text-blue-500' />
+                                                <FaEdit className='w-6 h-6 text-blue-500 hover:text-blue-700 transition' />
                                             </button>
                                         </td>
                                         <td className="pt-5 pb-6">
                                             <button onClick={() => handleDelete(user.user_id, user.user_name)}>
-                                                <MdDeleteForever className='w-7 h-7 text-red-600' />
+                                                <MdDeleteForever className='w-7 h-7 text-red-500 hover:text-red-700 transition' />
                                             </button>
                                         </td>
                                     </tr>
                                 </tbody>
-
                             );
                         })}
                     </table>
                 )}
             </div>
         </div>
-
-
     );
 };
 

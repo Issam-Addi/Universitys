@@ -6,6 +6,8 @@ import Hero from "../assets/image/Hero.png";
 function Landing() {
 
     const [unis, setUnis] = useState([]);
+    const showAll = false;
+    const visibleUnis = showAll ? unis : unis.slice(0, 3);
 
     useEffect(() => {
         const unisData = async () => {
@@ -18,6 +20,10 @@ function Landing() {
             }
         };
         unisData();
+    }, []);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
     }, []);
 
     const features = [
@@ -50,26 +56,23 @@ function Landing() {
 
     return (
         <>
-            <section className="relative flex flex-col items-center justify-center text-center text-white h-[39.2rem]">
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-                    <img
-                        className="w-full h-full absolute object-civer" 
-                        alt='Hero'
-                        src={Hero}
-                    />
-                </div>
-                <div className="space-y-2 z-10 bg-black opacity-75 p-4 rounded-lg">
-                    <h1 className="font-bold text-5xl text-blue-500">Welcome to Naqilati</h1>
-                    <h3 className="font-bold text-2xl">In Naqilati, do not get lost or confused,<br />Know your University bus, where to stop and when to move</h3>
-                    <div className="rounded-lg">
-                        <Link to='/university_buses'>
-                            <button className="rounded-lg border px-6 py-2 md:text-sm font-normal border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:bg-blue-500 hover:text-black hover:shadow-lg hover:shadow-blue-500">
-                                Pick Your University
-                            </button>
-                        </Link>
+            <div
+                className="bg-cover bg-center h-screen bg-fixed"
+                style={{ backgroundImage: `url(${Hero})`, height: "39.7rem" }}>
+                <div className="flex items-center justify-center h-full bg-black bg-opacity-50">
+                    <div className="text-center w-1/2">
+                        <h1 className="font-bold text-5xl text-blue-500 mb-3">Welcome to Naqilati</h1>
+                        <h3 className="font-bold text-2xl text-white">In Naqilati, do not get lost or confused,<br />Know your University bus, where to stop and when to move</h3>
+                        <div className="mt-8">
+                            <Link to='/all_university'>
+                                <button className="rounded-lg border px-6 py-2 md:text-sm font-normal border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:bg-blue-500 hover:text-black hover:shadow-lg hover:shadow-blue-500">
+                                    Pick Your University
+                                </button>
+                            </Link>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
             <section className="relative pt-10">
                 <div className="relative z-10 max-w-screen-xl mx-auto px-4 justify-between gap-24 lg:flex md:px-8">
@@ -114,28 +117,34 @@ function Landing() {
                     </div>
                     <div className="mt-12">
                         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-                            {
-                                unis?.map((item, idx) => (
-                                    <Link to={`/university/${item.university_id}`}
-                                        key={idx}
-                                        className="transition hover:rotate-2 hover:scale-110 hover:shadow-xl rounded-lg">
-                                        <div className="border border-blue-500 px-1 rounded-lg">
-
-                                            <img
-                                                src={item.university_image}
-                                                alt={`${item.university_name} university`}
-                                                className="object-center w-full rounded-t-md h-48" />
-                                            <div className="flex flex-col justify-between p-6 space-y-8">
-                                                <div className="space-y-2">
-                                                    <h2 className="text-3xl">{item.university_name}</h2>
-                                                </div>
+                            {visibleUnis.map((item, idx) => (
+                                <Link
+                                    to={`/university/${item.university_id}`}
+                                    key={idx}
+                                    className="transition hover:rotate-2 hover:scale-110 hover:shadow-xl rounded-lg">
+                                    <div className="border border-blue-500 px-1 rounded-lg">
+                                        <img
+                                            src={item.university_image1}
+                                            alt={`${item.university_name} university`}
+                                            className="object-center w-full rounded-t-md h-48" />
+                                        <div className="flex flex-col justify-between p-6 space-y-8">
+                                            <div className="space-y-2">
+                                                <h2 className="text-3xl">{item.university_name}</h2>
                                             </div>
-
                                         </div>
-                                    </Link>
-                                ))
-                            }
+                                    </div>
+                                </Link>
+                            ))}
                         </div>
+                        {!showAll && unis.length > 3 && (
+                            <div className="mt-4 text-center">
+                                <Link to="/all_university">
+                                    <button className="rounded-lg border px-6 py-2 md:text-sm font-normal border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:bg-blue-500 hover:text-black hover:shadow-lg hover:shadow-blue-500">
+                                        Show More
+                                    </button>
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>

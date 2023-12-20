@@ -10,7 +10,8 @@ function Footer() {
                 <img
                     src={Logo}
                     width={100}
-                    className="sm:mx-auto" alt="Logo" />
+                    className="sm:mx-auto" 
+                    alt="Logo" />
             </div>
             <ul className="items-center justify-center mt-8 space-y-5 sm:flex sm:space-x-4 sm:space-y-0">
                 <li
@@ -22,7 +23,7 @@ function Footer() {
                 <li
                     className="text-white hover:text-blue-500 transition">
                     <Link to="/all_university" className="block">
-                        Buses
+                        Universitys
                     </Link>
                 </li>
                 <li

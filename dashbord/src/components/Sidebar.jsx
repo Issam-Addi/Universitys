@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { BsClipboard2Data } from "react-icons/bs";
 import { FaRegUser, FaUniversity, FaEdit } from "react-icons/fa";
@@ -12,6 +12,9 @@ function Sodebar() {
         window.location.reload();
     };
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <aside className="min-h-screen p-4 shadow-xl bg-black w-72">

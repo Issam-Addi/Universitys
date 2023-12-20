@@ -52,7 +52,6 @@ const AddNewUSer = async (req, res) => {
             }
         );
     } catch (error) {
-        console.log(error);
         res.status(500).json("Internal Server Error");
     }
 };
@@ -133,7 +132,6 @@ const checkUser = async (req, res) => {
             res.json('User not found');
         }
     } catch (error) {
-        console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
@@ -171,15 +169,13 @@ const checkAdmin = async (req, res) => {
             res.json('User not found');
         }
     } catch (error) {
-        console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 
 const allUsers = async (req, res) => {
     try {
-        const { user_email, user_password } = req.body;
-        const all_user = await pool.query('SELECT * FROM users_and_admins WHERE user_flags = 0');
+        const all_user = await pool.query('SELECT * FROM users_and_admins WHERE user_flags = 0  ORDER BY user_id ASC');
         if (all_user.rows.length !== 0) {
             res.json(all_user.rows)
         } else {
@@ -275,12 +271,10 @@ const updateUserFlag = async (req, res) => {
 const sendPINCode = async (req, res) => {
     try {
         const { user_email } = req.body;
-        console.log(user_email);
         const user = await pool.query('SELECT * FROM users_and_admins WHERE user_email = $1 AND user_flags = 0', [user_email]);
 
         if (user.rows.length !== 0) {
             const verificationCode = Math.floor(100000 + Math.random() * 900000);
-            console.log(verificationCode);
             const updateUserForgotPassword = await pool.query("UPDATE users_and_admins SET user_forgot_password = $1 WHERE user_email = $2 RETURNING *",
                 [verificationCode, user_email]);
 
@@ -311,7 +305,6 @@ const checkUserPINCodeAndUpdatePassword = async (req, res) => {
         const { user_email, user_forgot_password } = req.body;
         const checkUserPIN = await pool.query("SELECT * FROM users_and_admins WHERE user_email = $1 AND user_forgot_password = $2",
             [user_email, user_forgot_password]);
-        console.log(checkUserPIN.rows[0]);
         if (checkUserPIN.rows.length !== 0) {
             return res.json("pin code successful")
         } else {
@@ -325,7 +318,6 @@ const checkUserPINCodeAndUpdatePassword = async (req, res) => {
 const saveNewPassword = async (req, res) => {
     try {
         const { user_password, user_email } = req.body;
-        console.log(user_password + '\n' + user_email);
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
         const hashedPassword = await bcrypt.hash(user_password, salt);

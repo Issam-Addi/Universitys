@@ -16,6 +16,10 @@ function Feedback() {
             .catch((error) => console.log(error.message))
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     function HandleUser(e) {
         setCurrentUser(e)
     }
@@ -57,7 +61,7 @@ function Feedback() {
                                 All messages
                             </span>
                             <span className="flex items-center justify-center bg-blue-200 h-7 w-7 rounded-full">
-                                {reporters.length}
+                                {reporters?.length}
                             </span>
                         </div>
                         <div className="flex flex-col space-y-1 mt-4 -mx-2 h-auto overflow-y-auto">
@@ -67,10 +71,10 @@ function Feedback() {
                                         onClick={() => HandleUser(reporter)}
                                         className="flex flex-row items-center hover:bg-blue-500 rounded-xl p-2">
                                         <div className="bg-blue-200 w-10 h-10 flex items-center justify-center rounded-full">
-                                            {reporter.user_name.charAt(0)}
+                                            {reporter?.user_name.charAt(0)}
                                         </div>
                                         <div className="ml-2 text-sm font-semibold">
-                                            {reporter.user_name}
+                                            {reporter?.user_name}
                                         </div>
                                     </button>
                                 )
@@ -78,20 +82,18 @@ function Feedback() {
                         </div>
                     </div>
                 </div>
-
                 <div className="flex flex-col flex-auto h-full">
                     <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-blue-100 h-full p-4">
                         <div className="flex flex-col h-full">
                             <div className="flex flex-row items-center">
                                 <div className="bg-blue-500 w-10 h-10 flex items-center justify-center rounded-full">
-                                    {currentUser.user_name?.charAt(0)}
+                                    {currentUser?.user_name?.charAt(0)}
                                 </div>
                                 <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                                    <div>{currentUser.user_message}</div>
+                                    <div>{currentUser?.user_message}</div>
                                 </div>
                             </div>
                         </div>
-
                         <form
                             onSubmit={() => handleSendMessage()}
                             className="flex items-center gap-4 w-full px-4">
@@ -104,7 +106,7 @@ function Feedback() {
                             <button
                                 type='submit'
                                 className="rounded-lg border border-current px-6 py-2 md:text-sm font-normal border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:bg-blue-500 hover:text-black hover:shadow-lg hover:shadow-blue-500">
-                                Update
+                                Send
                             </button>
                         </form>
                     </div>

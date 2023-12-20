@@ -2,9 +2,9 @@ const pool = require("../models/DB");
 
 const postContactMessages = async (req, res) => {
     try {
-        const { user_name, user_phone, user_email, user_message } = req.body;
-        const values = [user_name, user_phone, user_email, user_message];
-        const all_records = await pool.query("INSERT INTO contact_us_message ( user_name, user_phone, user_email, user_message ) VALUES( $1, $2, $3 , $4 ) RETURNING *", values);
+        const { user_name, user_email, user_message } = req.body;
+        const values = [user_name, user_email, user_message];
+        const all_records = await pool.query("INSERT INTO contact_us_message ( user_name, user_email, user_message ) VALUES( $1, $2, $3 ) RETURNING *", values);
         res.json(all_records.rows);
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });

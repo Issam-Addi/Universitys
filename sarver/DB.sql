@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS public.contact_us_message
 (
     contact_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 0 MINVALUE 0 MAXVALUE 1000000 CACHE 1 ),
     user_name text COLLATE pg_catalog."default" NOT NULL,
-    user_phone text COLLATE pg_catalog."default" NOT NULL,
     user_email text COLLATE pg_catalog."default" NOT NULL,
     user_message text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT contact_pk PRIMARY KEY (contact_id)

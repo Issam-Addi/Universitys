@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Logo from "../assets/image/Logo.png";
 
 function SignIn() {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const navigate = useNavigate();
 
@@ -77,7 +81,6 @@ function SignIn() {
     async function handleSubmit(event) {
         event.preventDefault();
         if (checkInput.user_email && checkInput.user_password) {
-
             await axios.post("http://localhost:5000/checkUser", {
                 user_email: user_email,
                 user_password: user_password,
@@ -96,6 +99,9 @@ function SignIn() {
                 .catch(function (error) {
                     console.log(error);
                 });
+        } else {
+            setInputTheme({ ...inputTheme, one_of_them_are_Invalid: themeValue.error });
+            setMassageWarning({ ...massageWarning, one_of_them_is_Invalid: "Please enter all data" });
         }
     }
 
@@ -129,7 +135,6 @@ function SignIn() {
                                 type="email"
                                 className={`w-full mt-2 px-3 py-2 bg-transparent outline-none border shadow-sm rounded-lg border-${inputTheme.user_email} text-${inputTheme.user_email}`} />
                         </div>
-
                         <div>
                             <label className={`font-medium text-${inputTheme.user_password}`} htmlFor='Pass'>
                                 Password <span className='text-red-700 text-xl'>*</span>
@@ -154,12 +159,10 @@ function SignIn() {
                                 </button>
                             </div>
                         </div>
-
                         <button className="w-full rounded-lg border border-current px-6 py-2 font-normal border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:bg-blue-500 hover:text-black hover:shadow-lg hover:shadow-blue-500">
                             Sign in
                         </button>
                     </form>
-
                     <button
                         className="w-full flex items-center justify-center gap-x-3 py-2.5 text-sm font-medium rounded-lg border border-current md:text-sm border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:text-black hover:shadow-lg hover:shadow-blue-500"
                         id="customBtn">
@@ -178,7 +181,6 @@ function SignIn() {
                         </svg>
                         Continue with Google
                     </button>
-
                     <p className="text-center">Don't have an account? <Link to="/signUp" className="font-medium text-blue-500 hover:underline">Sign up</Link></p>
                 </div>
             </main>

@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Static from '../components/Static';
 
 function Landing() {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div>
-
             <Static />
-
             <div className="md:mt-14 mt-4 relative sm:flex items-center justify-center">
                 <img
                     src="https://i.ibb.co/KjrPCyW/map.png"

@@ -28,6 +28,10 @@ function ListUniversity() {
             .catch((error) => console.log(error.message))
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const filterDataByName = (search) => {
         const filtered = allUnuis?.filter((item) =>
             item.university_name.toLowerCase().includes(search.toLowerCase())
@@ -82,14 +86,14 @@ function ListUniversity() {
     function handleSubmit(event) {
         event.preventDefault()
         Swal.fire({
-            title: "Are you sure",
+            title: "Are you sure you want to add a new University?",
             showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "OK",
             confirmButtonColor: "blue",
             cancelButtonText: "Cancel",
-            cancelButtonColor: "blue",
-            icon: 'warning'
+            cancelButtonColor: "red",
+            icon: 'question'
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -104,23 +108,32 @@ function ListUniversity() {
                         university_image1: university_image1,
                     })
                         .then(function (response) {
-                            console.log(response);
+                            if (response.status === 200) {
+                                event.target.reset();
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "The University data has been added successfully",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
                         })
-                        .catch(function (error) {
-                            console.log(error);
+                        .catch(function () {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Server error",
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
                         });
-                    Swal.fire("The University data has been added successfully", '', 'success');
-                    setUniversity_name("");
-                    setUniversity_email("");
-                    setUniversity_description("");
-                    setUniversity_location("");
-                    setUniversity_phone("");
-                    setUniversity_image1("");
-                    setUniversity_image("");
-                    setNumber_of_majors("");
                     setAdd(!add);
                 } else
-                    Swal.fire(' Cancelled', '', 'error')
+                    Swal.fire({
+                    icon: "error",
+                    title: "Cancelled",
+                    showConfirmButton: false,
+                    timer: 1000
+                });
             })
     }
 
@@ -148,12 +161,11 @@ function ListUniversity() {
                     Add new University
                 </button>
             </div>
-
             {add && (
                 <div className='block pb-16'>
                     <div className="px-10">
                         <h3 className="text-blue-500 text-xl font-semibold sm:text-2xl">
-                        Add new University
+                            Add new University
                         </h3>
                     </div>
                     <div className="flex justify-start w-full mt-3 px-10">
@@ -162,7 +174,9 @@ function ListUniversity() {
                             className="space-y-8 w-full">
                             <div className="mb-6 grid gap-6 grid-cols-2">
                                 <div>
-                                    <label htmlFor='name'>University name</label>
+                                    <label htmlFor='name'>
+                                        University name <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="name"
                                         type="text"
@@ -172,7 +186,9 @@ function ListUniversity() {
                                         required />
                                 </div>
                                 <div>
-                                    <label htmlFor='description'>University description</label>
+                                    <label htmlFor='description'>
+                                        University description <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <textarea
                                         rows={6}
                                         id="description"
@@ -185,7 +201,9 @@ function ListUniversity() {
                             </div>
                             <div className="mb-6 grid gap-6 grid-cols-4">
                                 <div>
-                                    <label htmlFor='email'>University email</label>
+                                    <label htmlFor='email'>
+                                        University email <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="email"
                                         type="email"
@@ -195,7 +213,9 @@ function ListUniversity() {
                                         required />
                                 </div>
                                 <div>
-                                    <label htmlFor='majors'>Number of majors</label>
+                                    <label htmlFor='majors'>
+                                        Number of majors <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="majors"
                                         type="text"
@@ -205,7 +225,9 @@ function ListUniversity() {
                                         required />
                                 </div>
                                 <div>
-                                    <label htmlFor='location'>University location</label>
+                                    <label htmlFor='location'>
+                                        University location <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="location"
                                         type="text"
@@ -215,7 +237,9 @@ function ListUniversity() {
                                         required />
                                 </div>
                                 <div>
-                                    <label htmlFor='phone'>University phone</label>
+                                    <label htmlFor='phone'>
+                                        University phone <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="phone"
                                         type="text"
@@ -226,104 +250,114 @@ function ListUniversity() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 items-center justify-center w-full gap-6 !m-0">
-                                <label
-                                    htmlFor="card"
-                                    className="flex flex-col items-center justify-center mt-10 w-full h-40 border-2 border-black border-dashed rounded-lg cursor-pointer bg-transparent hover:bg-blue-100">
-                                    {university_image ? (
-                                        <>
-                                            <img
-                                                src={university_image}
-                                                alt="card"
-                                                className="w-28 h-28 mb-2 rounded-lg"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="text-sm text-red-500 font-semibold"
-                                                onClick={removeImageOne}>
-                                                Remove
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center">
-                                            <svg
-                                                className="w-8 h-8 mb-4 text-blue-500"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 20 16">
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                            </svg>
-                                            <p className="mb-2 text-sm text-black font-semibold">
-                                                Click to upload card image
-                                            </p>
-                                            <p className="text-xs text-black">
-                                                SVG, PNG or JPG
-                                            </p>
-                                        </div>
-                                    )}
-                                    <input
-                                        id="card"
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={(event) => handleImageOne(event)}
-                                        required
-                                    />
-                                </label>
-                                <label
-                                    htmlFor="hero"
-                                    className="flex flex-col items-center justify-center mt-10 w-full h-40 border-2 border-black border-dashed rounded-lg cursor-pointer bg-transparent hover:bg-blue-100">
-                                    {university_image1 ? (
-                                        <>
-                                            <img
-                                                src={university_image1}
-                                                alt="hero"
-                                                className="w-28 h-28 mb-2 rounded-lg"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="text-sm text-red-500 font-semibold"
-                                                onClick={removeImageTwo}>
-                                                Remove
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center">
-                                            <svg
-                                                className="w-8 h-8 mb-4 text-blue-500"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 20 16">
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                            </svg>
-                                            <p className="mb-2 text-sm text-black font-semibold">
-                                                Click to upload hero image
-                                            </p>
-                                            <p className="text-xs text-black">
-                                                SVG, PNG or JPG
-                                            </p>
-                                        </div>
-                                    )}
-                                    <input
-                                        id="hero"
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={(event) => handleImageTwo(event)}
-                                        required
-                                    />
-                                </label>
+                                <div>
+                                    <p className='m-0 mt-10 -mb-7'>
+                                        Hero image <span className='text-red-700 text-xl'>*</span>
+                                    </p>
+                                    <label
+                                        htmlFor="Hero"
+                                        className="flex flex-col items-center justify-center mt-10 w-full h-40 border-2 border-black border-dashed rounded-lg cursor-pointer bg-transparent hover:bg-blue-100">
+                                        {university_image ? (
+                                            <>
+                                                <img
+                                                    src={university_image}
+                                                    alt="Hero"
+                                                    className="w-28 h-28 mb-2 rounded-lg"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="text-sm text-red-500 font-semibold"
+                                                    onClick={removeImageOne}>
+                                                    Remove
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center">
+                                                <svg
+                                                    className="w-8 h-8 mb-4 text-blue-500"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 20 16">
+                                                    <path
+                                                        stroke="currentColor"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                </svg>
+                                                <p className="mb-2 text-sm text-black font-semibold">
+                                                    Click to upload hero image
+                                                </p>
+                                                <p className="text-xs text-black">
+                                                    SVG, PNG or JPG
+                                                </p>
+                                            </div>
+                                        )}
+                                        <input
+                                            id="Hero"
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={(event) => handleImageOne(event)}
+                                            required
+                                        />
+                                    </label>
+                                </div>
+                                <div>
+                                    <p className='m-0 mt-10 -mb-7'>
+                                        Card and details image
+                                        <span className='text-red-700 text-xl'>*</span></p>
+                                    <label
+                                        htmlFor="Card"
+                                        className="flex flex-col items-center justify-center mt-10 w-full h-40 border-2 border-black border-dashed rounded-lg cursor-pointer bg-transparent hover:bg-blue-100">
+                                        {university_image1 ? (
+                                            <>
+                                                <img
+                                                    src={university_image1}
+                                                    alt="Card"
+                                                    className="w-28 h-28 mb-2 rounded-lg"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="text-sm text-red-500 font-semibold"
+                                                    onClick={removeImageTwo}>
+                                                    Remove
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center">
+                                                <svg
+                                                    className="w-8 h-8 mb-4 text-blue-500"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 20 16">
+                                                    <path
+                                                        stroke="currentColor"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                </svg>
+                                                <p className="mb-2 text-sm text-black font-semibold">
+                                                    Click to upload Card image
+                                                </p>
+                                                <p className="text-xs text-black">
+                                                    SVG, PNG or JPG
+                                                </p>
+                                            </div>
+                                        )}
+                                        <input
+                                            id="Card"
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={(event) => handleImageTwo(event)}
+                                            required
+                                        />
+                                    </label>
+                                </div>
                             </div>
                             <div className='flex justify-center'>
                                 <button type='submit'
@@ -366,7 +400,7 @@ function ListUniversity() {
                                         <td className="pt-5 pb-6 flex items-center">
                                             <div className="h-12 w-12">
                                                 <img
-                                                    src={uni?.university_image}
+                                                    src={uni?.university_image1}
                                                     className="h-full w-full rounded-full"
                                                     alt={uni?.university_name} />
                                             </div>
@@ -388,7 +422,7 @@ function ListUniversity() {
                                         </td>
                                         <td className="pt-5 pb-6">
                                             <Link to={`/list_universitys/${uni?.university_id}`} className="ml-6">
-                                                <FaEdit className='w-6 h-6 text-blue-500' />
+                                                <FaEdit className='w-6 h-6 text-blue-500 hover:text-blue-700 transition' />
                                             </Link>
                                         </td>
                                     </tr>

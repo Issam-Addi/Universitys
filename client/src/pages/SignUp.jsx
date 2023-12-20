@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Logo from "../assets/image/Logo.png";
 
 function SignUp() {
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const navigate = useNavigate();
 
@@ -23,7 +27,8 @@ function SignUp() {
     user_phone: '',
     user_email: '',
     user_password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    data: ''
   });
 
   const [inputTheme, setInputTheme] = useState({
@@ -254,7 +259,6 @@ function SignUp() {
               required
               className={`w-full mt-2 px-3 py-2 bg-transparent outline-none border shadow-sm rounded-lg border-${inputTheme.confirmPassword} text-${inputTheme.confirmPassword}`} />
           </div>
-
           <button className="w-full rounded-lg border border-current px-6 py-2 md:text-sm font-normal border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:bg-blue-500 hover:text-black hover:shadow-lg hover:shadow-blue-500">
             Create account
           </button>

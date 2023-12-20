@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useState, useEffect } from "react";
 import { AiOutlineRight } from "react-icons/ai";
 import aboutHero from "../assets/image/about-us-pic.jpg"
 
@@ -19,9 +18,11 @@ function AboutUs() {
                 console.error('Error fetching data:', error);
             }
         };
-
         getAboutData();
+    }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
     }, []);
 
     const features = [
@@ -82,11 +83,11 @@ function AboutUs() {
     return (
         <div>
             <div
-                className="bg-cover bg-center h-screen"
-                style={{ backgroundImage: `url(${aboutHero})`, height: "39.2rem" }}>
+                className="bg-cover bg-center h-screen bg-fixed"
+                style={{ backgroundImage: `url(${aboutHero})`, height: "39.7rem" }}>
                 <div className="flex items-center justify-center h-full bg-black bg-opacity-50">
-                    <div className="text-center">
-                        <h1 className="text-4xl font-bold text-white mb-4">About Us</h1>
+                    <div className="text-center w-1/2">
+                        <h1 className="text-4xl font-bold text-white mb-4">Learn about the services provided by our website and get to know our team</h1>
                         <nav className="text-white mb-8">
                             <ol className="list-none p-0 inline-flex">
                                 <li className="flex items-center">

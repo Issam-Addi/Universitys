@@ -2,7 +2,7 @@ const pool = require("../models/DB");
 
 const unisData = async (req, res) => {
     try {
-        const unisData = await pool.query("SELECT university_id, university_name, university_image, university_email, university_phone FROM university_data ORDER BY university_id ASC");
+        const unisData = await pool.query("SELECT university_id, university_name, university_image1, university_email, university_phone FROM university_data ORDER BY university_id ASC");
         res.json(unisData.rows);
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
@@ -74,7 +74,7 @@ const editStreetData = async (req, res) => {
         const { university_id, starting_place, departure_time } = req.body;
         await pool.query("UPDATE street_data Set starting_place = $1, departure_time = $2 WHERE street_id = $3 AND university_id = $4",
         [starting_place, departure_time, street_id, university_id]);
-        res.send("Added Successfully");
+        res.send("Updated Successfully");
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });

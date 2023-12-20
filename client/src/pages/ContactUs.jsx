@@ -23,27 +23,38 @@ function ContactUs() {
             }
         };
         getAboutData();
-    }, [contactUsData]);
+    }, []);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const [user_name, setUser_name] = useState("");
     const [user_email, setUser_email] = useState("");
-    const [user_phone, setUser_phone] = useState("");
     const [user_message, setUser_message] = useState("");
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const contactMessage = { user_name, user_email, user_phone, user_message };
-
+        const contactMessage = { user_name, user_email, user_message };
         try {
             const response = await axios.post("http://localhost:5000/sendMessages", contactMessage);
             if (response.status === 200) {
-                Swal.fire("Success", "Message sent successfully!", "success");
+                Swal.fire({
+                    icon: "success",
+                    title: "Message sent successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 setUser_name("");
                 setUser_email("");
-                setUser_phone("");
                 setUser_message("");
             } else {
-                Swal.fire("Error", "Failed to send message.", "error");
+                Swal.fire({
+                    icon: "error",
+                    title: "Server error",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
             }
         } catch (error) {
             Swal.fire("Error", "An error occurred during form submission.", "error");
@@ -53,8 +64,8 @@ function ContactUs() {
     return (
         <div>
             <div
-                className="bg-cover bg-center h-screen"
-                style={{ backgroundImage: `url(${contactHero})`, height: "39.2rem" }}>
+                className="bg-cover bg-center h-screen bg-fixed"
+                style={{ backgroundImage: `url(${contactHero})`, height: "39.7rem" }}>
                 <div className="flex items-center justify-center h-full bg-black bg-opacity-50">
                     <div className="text-center">
                         <h1 className="text-4xl font-bold text-white mb-4">Get in touch with us</h1>
@@ -119,7 +130,6 @@ function ContactUs() {
                             </a>
                         </div>
                     </div>
-
                     <div className="w-full lg:w-1/2 xl:w-5/12 bg-white">
                         <div className="relative rounded-lg p-8 border border-blue-500 sm:p-12">
                             <form method="post" onSubmit={handleSubmit}>
@@ -141,16 +151,6 @@ function ContactUs() {
                                         placeholder="Your Email"
                                         className="w-full py-3 px-[14px] mt-2 rounded-lg text-blue-500 border border-black focus:border-blue-500 focus:ring-0 outline-none"
                                         onChange={(event) => setUser_email(event.target.value)}
-                                        required />
-                                </div>
-                                <div className="mb-6">
-                                    <label htmlFor='Phone'>Phone <span className='text-red-700 text-xl'>*</span></label>
-                                    <input
-                                        id="Phone"
-                                        type="text"
-                                        placeholder="Your Phone"
-                                        className="w-full py-3 px-[14px] mt-2 rounded-lg text-blue-500 border border-black focus:border-blue-500 focus:ring-0 outline-none"
-                                        onChange={(event) => setUser_phone(event.target.value)}
                                         required />
                                 </div>
                                 <div className="mb-6">

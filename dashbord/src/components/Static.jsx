@@ -35,6 +35,10 @@ function Static() {
 
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div>
             <div className="px-10 pt-16">

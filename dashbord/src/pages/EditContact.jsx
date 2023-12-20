@@ -18,6 +18,10 @@ function EditContact() {
             .catch((error) => console.log(error.message))
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     function handleSubmit(event) {
         event.preventDefault()
         Swal.fire({
@@ -25,10 +29,10 @@ function EditContact() {
             showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "OK",
-            confirmButtonColor: "orange",
+            confirmButtonColor: "blue",
             cancelButtonText: "Cancel",
-            cancelButtonColor: "orange",
-            icon: 'warning'
+            cancelButtonColor: "red",
+            icon: 'question'
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -38,14 +42,29 @@ function EditContact() {
                         our_location: our_location,
                     })
                         .then(function (response) {
-                            console.log(response);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
+                            if (response.data === 'Updated Successfully') {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "The contact us data has been updated successfully",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        }).catch(function () {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Server error",
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
                         });
-                    Swal.fire("The contact us data has been updated successfully", '', 'success');
                 } else
-                    Swal.fire(' Cancelled', '', 'error')
+                    Swal.fire({
+                        icon: "error",
+                        title: "Cancelled",
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
             })
     }
 
@@ -63,7 +82,9 @@ function EditContact() {
                     className="space-y-8">
 
                     <div className="mb-6">
-                        <label htmlFor='our_phone'>Our phone</label>
+                        <label htmlFor='our_phone'>
+                            Our phone <span className='text-red-700 text-xl'>*</span>
+                        </label>
                         <input
                             id="our_phone"
                             type="text"
@@ -75,7 +96,9 @@ function EditContact() {
                     </div>
 
                     <div className="mb-6">
-                        <label htmlFor='our_email'>Our email</label>
+                        <label htmlFor='our_email'>
+                            Our email <span className='text-red-700 text-xl'>*</span>
+                        </label>
                         <input
                             id="our_email"
                             type="text"
@@ -87,7 +110,9 @@ function EditContact() {
                     </div>
 
                     <div className="mb-6">
-                        <label htmlFor='our_location'>Our location</label>
+                        <label htmlFor='our_location'>
+                            Our location <span className='text-red-700 text-xl'>*</span>
+                        </label>
                         <input
                             id="our_location"
                             type="text"

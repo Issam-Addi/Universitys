@@ -22,7 +22,7 @@ function Header({ isLoggedIn }) {
                             src={Logo}
                             width={100}
                             height={50}
-                            alt="Float UI logo"
+                            alt="logo"
                             onClick={() => setState(false)} />
                     </Link>
                     <div className="md:hidden">
@@ -73,7 +73,7 @@ function Header({ isLoggedIn }) {
                             className="text-black hover:text-blue-500 transition"
                             onClick={() => setState(false)}>
                             <Link to="/all_university" className="block">
-                                Buses
+                                Universitys
                             </Link>
                         </li>
                         <li

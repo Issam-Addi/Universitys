@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Logo from "../assets/image/Logo.png";
 
 function SignIn() {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const [user_email, setUser_email] = useState("");
     const [user_password, setUser_password] = useState("");

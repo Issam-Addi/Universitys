@@ -24,6 +24,10 @@ function AllUniversity() {
         unisData();
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const filterDataByName = (search) => {
         const filtered = unis?.filter((item) =>
             item.university_name.toLowerCase().includes(search.toLowerCase())
@@ -34,11 +38,11 @@ function AllUniversity() {
     return (
         <div>
             <div
-                className="bg-cover bg-center h-screen"
-                style={{ backgroundImage: `url(${UniHero})`, height: "39.2rem" }}>
+                className="bg-cover bg-center h-screen bg-fixed"
+                style={{ backgroundImage: `url(${UniHero})`, height: "39.7rem" }}>
                 <div className="flex items-center justify-center h-full bg-black bg-opacity-50">
                     <div className="text-center">
-                        <h1 className="text-4xl font-bold text-white mb-4">All University</h1>
+                        <h1 className="text-4xl font-bold text-white mb-4">All Universitys</h1>
                         <nav className="text-white mb-8">
                             <ol className="list-none p-0 inline-flex">
                                 <li className="flex items-center">
@@ -77,31 +81,31 @@ function AllUniversity() {
                         </h3>
                     </div>
                     <div className="mt-12">
-                    {filterData.length === 0 ? (
+                        {filterData.length === 0 ? (
                             <p>No data matching your criteria</p>
                         ) : (
-                        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-                            {
-                                filterData?.map((item, idx) => (
-                                    <Link to={`/university/${item.university_id}`}
-                                        key={idx}
-                                        className="transition hover:rotate-2 hover:scale-110 hover:shadow-xl rounded-lg">
-                                        <div className="border border-blue-500 px-1 rounded-lg">
+                            <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+                                {
+                                    filterData?.map((item, idx) => (
+                                        <Link to={`/university/${item.university_id}`}
+                                            key={idx}
+                                            className="transition hover:rotate-2 hover:scale-110 hover:shadow-xl rounded-lg">
+                                            <div className="border border-blue-500 px-1 rounded-lg">
 
-                                            <img
-                                                src={item.university_image}
-                                                alt={`${item.university_name} university`}
-                                                className="object-center w-full rounded-t-md h-48" />
-                                            <div className="flex flex-col justify-between p-6 space-y-8">
-                                                <div className="space-y-2">
-                                                    <h2 className="text-3xl">{item.university_name}</h2>
+                                                <img
+                                                    src={item.university_image1}
+                                                    alt={`${item.university_name} university`}
+                                                    className="object-center w-full rounded-t-md h-48" />
+                                                <div className="flex flex-col justify-between p-6 space-y-8">
+                                                    <div className="space-y-2">
+                                                        <h2 className="text-3xl">{item.university_name}</h2>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                        </div>
-                                    </Link>
-                                ))}
-                        </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                            </div>
                         )}
                     </div>
                 </div>

@@ -1,6 +1,12 @@
 import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
 
 const NotFound = () => {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <section>
             <div className="text-black">

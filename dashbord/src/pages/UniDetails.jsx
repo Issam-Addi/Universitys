@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaPhone } from "react-icons/fa6";
-import { MdEmail } from "react-icons/md";
+import { MdEmail, MdDescription } from "react-icons/md";
 import { ImBooks } from "react-icons/im";
 import { IoLocation } from "react-icons/io5";
 import { FaEdit, FaBusAlt } from "react-icons/fa";
@@ -56,6 +56,20 @@ function UniDetails() {
         unisData();
     }, [university_id]);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    const formatDepartureTime = (departureTime) => {
+        const parsedTime = new Date(`1970-01-01T${departureTime}`);
+        const hours = parsedTime.getHours();
+        const minutes = parsedTime.getMinutes();
+        const formattedTime = hours > 12 ?
+            `${hours - 12}:${minutes.toString().padStart(2, '0')} PM`
+            : `${hours}:${minutes.toString().padStart(2, '0')} AM`;
+        return formattedTime;
+    };
+
     // image one
     const onLoadOne = fileString => {
         setUniversity_image(fileString);
@@ -103,14 +117,14 @@ function UniDetails() {
     function handleSubmit(event) {
         event.preventDefault()
         Swal.fire({
-            title: "Are you sure",
+            title: "Are you sure you want to edit University data?",
             showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "OK",
             confirmButtonColor: "blue",
             cancelButtonText: "Cancel",
-            cancelButtonColor: "blue",
-            icon: 'warning'
+            cancelButtonColor: "red",
+            icon: 'question'
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -125,28 +139,44 @@ function UniDetails() {
                         university_image1: university_image1,
                     })
                         .then(function (response) {
-                            console.log(response);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
+                            if (response.status === 200) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "The University data has been updated successfully",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        }).catch(function () {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Server error",
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
                         });
-                    Swal.fire("The University data has been updated successfully", '', 'success');
+                    setEdit(!edit)
                 } else
-                    Swal.fire(' Cancelled', '', 'error')
+                    Swal.fire({
+                        icon: "error",
+                        title: "Cancelled",
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
             })
     }
 
     function handleCreateStreet(event) {
         event.preventDefault()
         Swal.fire({
-            title: "Are you sure",
+            title: "Are you sure you want to add new street?",
             showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "OK",
             confirmButtonColor: "blue",
             cancelButtonText: "Cancel",
-            cancelButtonColor: "blue",
-            icon: 'warning'
+            cancelButtonColor: "red",
+            icon: 'question'
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -156,29 +186,44 @@ function UniDetails() {
                         departure_time: departure_time
                     })
                         .then(function (response) {
-                            console.log(response);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
+                            if (response.status === 200) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "The street University data has been added successfully",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        }).catch(function () {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Server error",
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
                         });
-                    Swal.fire("The street University data has been added successfully", '', 'success');
                     setAddStreet(false)
                 } else
-                    Swal.fire(' Cancelled', '', 'error')
+                    Swal.fire({
+                        icon: "error",
+                        title: "Cancelled",
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
             })
     }
 
     function handleEditStreet(event) {
         event.preventDefault()
         Swal.fire({
-            title: "Are you sure",
+            title: "Are you sure you want to edit street data?",
             showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "OK",
             confirmButtonColor: "blue",
             cancelButtonText: "Cancel",
-            cancelButtonColor: "blue",
-            icon: 'warning'
+            cancelButtonColor: "red",
+            icon: 'question'
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -188,21 +233,35 @@ function UniDetails() {
                         departure_time: editDeparture_time
                     })
                         .then(function (response) {
-                            console.log(response);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
+                            if (response.status === 200) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "The street data has been update successfully",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        }).catch(function () {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Server error",
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
                         });
-                    Swal.fire("The street University data has been update successfully", '', 'success');
                     setEditStreet(false)
                 } else
-                    Swal.fire(' Cancelled', '', 'error')
+                    Swal.fire({
+                        icon: "error",
+                        title: "Cancelled",
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
             })
     }
 
     return (
         <div>
-
             <section className="relative flex flex-col items-center justify-center text-center text-white h-[39.2rem]">
                 <div className="video-docker absolute top-0 left-0 w-full h-full overflow-hidden">
                     <img
@@ -216,7 +275,6 @@ function UniDetails() {
                         <span className='text-blue-500 text-5xl'>{uni[0]?.university_name} </span>university</h3>
                 </div>
             </section>
-
             <section className="flex flex-col justify-center py-28 h-[35rem]">
                 <div className="max-w-screen-xl mx-auto p-4 md:px-8 w-full h-full">
                     <article className="mx-auto md:max-w-none grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 xl:gap-16 items-center">
@@ -240,10 +298,9 @@ function UniDetails() {
                                     </p>
                                 </h3>
                             </header>
+                            <MdDescription className='text-blue-500 inline-block h-7 w-7 mr-2' />
                             <p className="text-lg text-black flex-grow overflow-y-scroll h-28 sm:h-20 lg:h-28 mb-3">
                                 {uni[0]?.university_description}
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea at maxime fugit perspiciatis a omnis facere placeat, id architecto eligendi reprehenderit eaque iusto labore sit quas odit minus nemo et!
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste ex praesentium non recusandae debitis sit. Laboriosam ipsam sit facilis fugit assumenda illo culpa, a incidunt labore vero odit velit. Harum.
                             </p>
                             <p className="text-lg text-black flex-grow mb-3">
                                 <ImBooks className='text-blue-500 inline-block h-7 w-7 mr-2' />Number of Majors: {uni[0]?.number_of_majors}
@@ -282,7 +339,6 @@ function UniDetails() {
                     </article>
                 </div>
             </section>
-
             {edit && (
                 <div className='block pb-16'>
                     <div className="px-10">
@@ -296,7 +352,9 @@ function UniDetails() {
                             className="space-y-8 w-full">
                             <div className="mb-6 grid gap-6 grid-cols-2">
                                 <div>
-                                    <label htmlFor='name'>University name</label>
+                                    <label htmlFor='name'>
+                                        University name <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="name"
                                         type="text"
@@ -307,7 +365,9 @@ function UniDetails() {
                                         required />
                                 </div>
                                 <div>
-                                    <label htmlFor='description'>University description</label>
+                                    <label htmlFor='description'>
+                                        University description <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <textarea
                                         rows={6}
                                         id="description"
@@ -321,7 +381,9 @@ function UniDetails() {
                             </div>
                             <div className="mb-6 grid gap-6 grid-cols-4">
                                 <div>
-                                    <label htmlFor='email'>University email</label>
+                                    <label htmlFor='email'>
+                                        University email <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="email"
                                         type="email"
@@ -332,7 +394,9 @@ function UniDetails() {
                                         required />
                                 </div>
                                 <div>
-                                    <label htmlFor='majors'>Number of majors</label>
+                                    <label htmlFor='majors'>
+                                        Number of majors <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="majors"
                                         type="text"
@@ -343,7 +407,9 @@ function UniDetails() {
                                         required />
                                 </div>
                                 <div>
-                                    <label htmlFor='location'>University location</label>
+                                    <label htmlFor='location'>
+                                        University location <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="location"
                                         type="text"
@@ -354,7 +420,9 @@ function UniDetails() {
                                         required />
                                 </div>
                                 <div>
-                                    <label htmlFor='phone'>University phone</label>
+                                    <label htmlFor='phone'>
+                                        University phone <span className='text-red-700 text-xl'>*</span>
+                                    </label>
                                     <input
                                         id="phone"
                                         type="text"
@@ -366,104 +434,112 @@ function UniDetails() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 items-center justify-center w-full gap-6 !m-0">
-                                <label
-                                    htmlFor="top_left"
-                                    className="flex flex-col items-center justify-center mt-10 w-full h-40 border-2 border-black border-dashed rounded-lg cursor-pointer bg-transparent hover:bg-blue-100">
-                                    {university_image ? (
-                                        <>
-                                            <img
-                                                src={university_image}
-                                                alt="Selected"
-                                                className="w-28 h-28 mb-2 rounded-lg"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="text-sm text-red-500 font-semibold"
-                                                onClick={removeImageOne}>
-                                                Remove
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center">
-                                            <svg
-                                                className="w-8 h-8 mb-4 text-blue-500"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 20 16">
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                            </svg>
-                                            <p className="mb-2 text-sm text-black font-semibold">
-                                                Click to upload card image
-                                            </p>
-                                            <p className="text-xs text-black">
-                                                SVG, PNG or JPG
-                                            </p>
-                                        </div>
-                                    )}
-                                    <input
-                                        id="top_left"
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={(event) => handleImageOne(event)}
-                                        required
-                                    />
-                                </label>
-                                <label
-                                    htmlFor="bottum_left"
-                                    className="flex flex-col items-center justify-center mt-10 w-full h-40 border-2 border-black border-dashed rounded-lg cursor-pointer bg-transparent hover:bg-blue-100">
-                                    {university_image1 ? (
-                                        <>
-                                            <img
-                                                src={university_image1}
-                                                alt="bottum_left"
-                                                className="w-28 h-28 mb-2 rounded-lg"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="text-sm text-red-500 font-semibold"
-                                                onClick={removeImageTwo}>
-                                                Remove
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center">
-                                            <svg
-                                                className="w-8 h-8 mb-4 text-blue-500"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 20 16">
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                            </svg>
-                                            <p className="mb-2 text-sm text-black font-semibold">
-                                                Click to upload hero image
-                                            </p>
-                                            <p className="text-xs text-black">
-                                                SVG, PNG or JPG
-                                            </p>
-                                        </div>
-                                    )}
-                                    <input
-                                        id="bottum_left"
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={(event) => handleImageTwo(event)}
-                                        required
-                                    />
-                                </label>
+                                <div>
+                                    <p className='m-0 mt-10 -mb-7'>
+                                        Hero image <span className='text-red-700 text-xl'>*</span>
+                                    </p>
+                                    <label
+                                        htmlFor="Hero"
+                                        className="flex flex-col items-center justify-center mt-10 w-full h-40 border-2 border-black border-dashed rounded-lg cursor-pointer bg-transparent hover:bg-blue-100">
+                                        {university_image ? (
+                                            <>
+                                                <img
+                                                    src={university_image}
+                                                    alt="Hero"
+                                                    className="w-28 h-28 mb-2 rounded-lg"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="text-sm text-red-500 font-semibold"
+                                                    onClick={removeImageOne}>
+                                                    Remove
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center">
+                                                <svg
+                                                    className="w-8 h-8 mb-4 text-blue-500"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 20 16">
+                                                    <path
+                                                        stroke="currentColor"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                </svg>
+                                                <p className="mb-2 text-sm text-black font-semibold">
+                                                    Click to upload hero image
+                                                </p>
+                                                <p className="text-xs text-black">
+                                                    SVG, PNG or JPG
+                                                </p>
+                                            </div>
+                                        )}
+                                        <input
+                                            id="Hero"
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={(event) => handleImageOne(event)}
+                                        />
+                                    </label>
+                                </div>
+                                <div>
+                                    <p className='m-0 mt-10 -mb-7'>
+                                        Card and details image <span className='text-red-700 text-xl'>*</span>
+                                    </p>
+                                    <label
+                                        htmlFor="Card"
+                                        className="flex flex-col items-center justify-center mt-10 w-full h-40 border-2 border-black border-dashed rounded-lg cursor-pointer bg-transparent hover:bg-blue-100">
+                                        {university_image1 ? (
+                                            <>
+                                                <img
+                                                    src={university_image1}
+                                                    alt="Card"
+                                                    className="w-28 h-28 mb-2 rounded-lg"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="text-sm text-red-500 font-semibold"
+                                                    onClick={removeImageTwo}>
+                                                    Remove
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center">
+                                                <svg
+                                                    className="w-8 h-8 mb-4 text-blue-500"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 20 16">
+                                                    <path
+                                                        stroke="currentColor"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                </svg>
+                                                <p className="mb-2 text-sm text-black font-semibold">
+                                                    Click to upload Card image
+                                                </p>
+                                                <p className="text-xs text-black">
+                                                    SVG, PNG or JPG
+                                                </p>
+                                            </div>
+                                        )}
+                                        <input
+                                            id="Card"
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={(event) => handleImageTwo(event)}
+                                        />
+                                    </label>
+                                </div>
                             </div>
                             <div className='flex justify-center'>
                                 <button type='submit'
@@ -475,8 +551,7 @@ function UniDetails() {
                     </div>
                 </div>
             )}
-
-            <div className="text-left max-w-screen-xl mx-auto px-4 lg:flex md:px-8 pt-5 md:pt-0 mt-80 md:mt-0 flex justify-between">
+            <div className="text-left max-w-screen-xl mx-auto px-4 lg:flex md:px-8 pt-10 flex justify-between">
                 <h3 className="text-blue-500 text-3xl font-semibold sm:text-4xl">
                     Buses
                 </h3>
@@ -486,7 +561,6 @@ function UniDetails() {
                     Add new street
                 </button>
             </div>
-
             {addStreet && (
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black backdrop-blur-sm bg-opacity-50 z-50">
                     <div className="bg-white p-8 rounded-lg shadow-md z-50 max-w-md w-full">
@@ -498,7 +572,7 @@ function UniDetails() {
                                 <label
                                     htmlFor="starting_place"
                                     className="block text-black font-bold mb-2 text-left">
-                                    Starting place
+                                    Starting place <span className='text-red-700 text-xl'>*</span>
                                 </label>
                                 <input
                                     onChange={(event) => setStarting_place(event.target.value)}
@@ -512,7 +586,7 @@ function UniDetails() {
                                 <label
                                     htmlFor="departure_time"
                                     className="block text-black font-bold mb-2 text-left">
-                                    Departure time
+                                    Departure time <span className='text-red-700 text-xl'>*</span>
                                 </label>
                                 <input
                                     onChange={(event) => setDeparture_time(event.target.value)}
@@ -521,7 +595,6 @@ function UniDetails() {
                                     className="shadow-xl border border-black focus:border-blue-500 text-blue-500 rounded-lg w-full py-2 px-3 leading-tight outline-none"
                                     required />
                             </div>
-
                             <div className="flex items-center justify-between">
                                 <button
                                     type="submit"
@@ -538,13 +611,11 @@ function UniDetails() {
                     </div>
                 </div>
             )}
-
             <div className="text-left max-w-screen-xl mx-auto px-4 lg:flex md:px-8">
                 <p className="mt-3">
                     We'll show you most of the bus locations and departure times:
                 </p>
             </div>
-
             <section className='pb-24 mt-12'>
                 {
                     street?.map((item, idx) => (
@@ -572,7 +643,15 @@ function UniDetails() {
                                     </clipPath>
                                 </defs>
                             </svg>
-                            <p className="text-black">Bus no {idx + 1}: Stopping place {item.starting_place} And the departure time is {item.departure_time} {item?.Street_id}</p>
+                            <p className="text-black">
+                                Bus no {idx + 1}: Stopping place {item.starting_place}{' '}
+                                {item.departure_time && (
+                                    <>
+                                        And the departure time is{' '}
+                                        {formatDepartureTime(item.departure_time)}
+                                    </>
+                                )}
+                            </p>
                             <button
                                 onClick={() => {
                                     setEditStreet(true);
@@ -585,7 +664,6 @@ function UniDetails() {
                     ))
                 }
             </section>
-
             {editStreet && (
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black backdrop-blur-sm bg-opacity-50 z-50">
                     <div className="bg-white p-8 rounded-lg shadow-md z-50 max-w-md w-full">
@@ -597,7 +675,7 @@ function UniDetails() {
                                 <label
                                     htmlFor="editStarting_place"
                                     className="block text-black font-bold mb-2 text-left">
-                                    Starting place
+                                    Starting place <span className='text-red-700 text-xl'>*</span>
                                 </label>
                                 <input
                                     onChange={(event) => setEditStarting_place(event.target.value)}
@@ -612,7 +690,7 @@ function UniDetails() {
                                 <label
                                     htmlFor="starting_place"
                                     className="block text-black font-bold mb-2 text-left">
-                                    Starting place
+                                    Departure time <span className='text-red-700 text-xl'>*</span>
                                 </label>
                                 <input
                                     onChange={(event) => setEditDeparture_time(event.target.value)}
@@ -622,7 +700,6 @@ function UniDetails() {
                                     className="shadow-xl border border-black focus:border-blue-500 text-blue-500 rounded-lg w-full py-2 px-3 leading-tight outline-none"
                                     required />
                             </div>
-
                             <div className="flex items-center justify-between">
                                 <button
                                     type="submit"
