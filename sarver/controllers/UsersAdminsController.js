@@ -272,9 +272,9 @@ const sendPINCode = async (req, res) => {
     try {
         const { user_email } = req.body;
         const user = await pool.query('SELECT * FROM users_and_admins WHERE user_email = $1 AND user_flags = 0', [user_email]);
-
         if (user.rows.length !== 0) {
             const verificationCode = Math.floor(100000 + Math.random() * 900000);
+            console.log(verificationCode);
             const updateUserForgotPassword = await pool.query("UPDATE users_and_admins SET user_forgot_password = $1 WHERE user_email = $2 RETURNING *",
                 [verificationCode, user_email]);
 
@@ -287,15 +287,16 @@ const sendPINCode = async (req, res) => {
 
             transporter.sendMail(mailOptions, (error) => {
                 if (error) {
-                    return res.status(500).json("Unable to send verification code");
+                    return res.json("Unable to send verification code");
                 } else {
                     return res.status(200).json("The code sent successfully");
                 }
             });
         } else {
-            res.status(404).json({ error: 'User not found' });
+            res.json( 'User not found' );
         }
     } catch (error) {
+        console.log(error);
         return res.status(500).json('Internal Server Error');
     }
 }
@@ -308,7 +309,7 @@ const checkUserPINCodeAndUpdatePassword = async (req, res) => {
         if (checkUserPIN.rows.length !== 0) {
             return res.json("pin code successful")
         } else {
-            return res.status(500).json("incorrect pin code");
+            return res.json("incorrect pin code");
         }
     } catch (error) {
         return res.status(500).json('Internal Server Error');
@@ -323,7 +324,7 @@ const saveNewPassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(user_password, salt);
         const updatePassword = await pool.query("UPDATE users_and_admins SET user_password = $1 WHERE user_email = $2",
             [hashedPassword, user_email]);
-        res.status(201).json("Password reset successfully");
+        res.json("Password reset successfully");
     } catch (error) {
         return res.status(500).json('Internal Server Error');
     }

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Logo from "../assets/image/Logo.png";
+import Goolge from '../components/Goolge';
+import Swal from 'sweetalert2';
 
 function SignIn() {
 
@@ -13,6 +15,12 @@ function SignIn() {
 
     const [user_email, setUser_email] = useState("");
     const [user_password, setUser_password] = useState("");
+    const [showCheckEmail, setShowCheckEmail] = useState(false);
+    const [checkEmail, setCheckEmail] = useState("");
+    const [showCheckPIN, setShowCheckPIN] = useState(false);
+    const [checkPIN, setCheckPIN] = useState("");
+    const [showNewPass, setShowNewPass] = useState(false);
+    const [newPass, setNewPass] = useState("");
 
     const themeValue = {
         normal: "black",
@@ -24,19 +32,29 @@ function SignIn() {
         user_email: '',
         user_password: '',
         one_of_them_is_Invalid: '',
-        check_email: ''
+        check_email: '',
+        user_PIN: '',
+        newPass: '',
+        confirmPassword: ''
     });
 
     const [inputTheme, setInputTheme] = useState({
         user_email: themeValue.normal,
         user_password: themeValue.normal,
-        one_of_them_are_Invalid: themeValue.normal
+        one_of_them_are_Invalid: themeValue.normal,
+        check_email: themeValue.normal,
+        PIN: themeValue.normal,
+        newPass: themeValue.normal,
+        confirmPassword: themeValue.normal
     });
 
     const [checkInput, setCheckInput] = useState({
         user_email: false,
         user_password: false,
         check_email: false,
+        PIN: false,
+        newPass: false,
+        confirmPassword: false
     });
 
     function handleEmail(event) {
@@ -103,6 +121,152 @@ function SignIn() {
             setInputTheme({ ...inputTheme, one_of_them_are_Invalid: themeValue.error });
             setMassageWarning({ ...massageWarning, one_of_them_is_Invalid: "Please enter all data" });
         }
+    };
+
+    function checkUserEmail(event) {
+        const patternEmail = /^[A-z0-9]+([.-][A-z0-9]+)*@[A-z0-9]+\.[A-z]{2,5}$/;
+        const user_email = event.target.value;
+        if (user_email === '') {
+            setInputTheme({ ...inputTheme, check_email: themeValue.error });
+            setMassageWarning({ ...massageWarning, check_email: "This fild must not be empty" });
+        }
+        else if (!patternEmail.test(user_email)) {
+            setInputTheme({ ...inputTheme, check_email: themeValue.error });
+            setMassageWarning({ ...massageWarning, check_email: "Invalid email" });
+        }
+        else {
+            setMassageWarning({ ...massageWarning, check_email: '' });
+            setInputTheme({ ...inputTheme, check_email: themeValue.success });
+            setCheckEmail(user_email);
+            setCheckInput({ ...checkInput, check_email: true });
+        }
+    }
+
+    async function handleCheckPIN(event) {
+        event.preventDefault();
+        if (checkInput.PIN) {
+            await axios.post("http://localhost:5000/forgetPassword/checkUserPINCodeAndUpdatePassword", {
+                user_email: checkEmail,
+                user_forgot_password: checkPIN
+            })
+                .then(function (response) {
+                    if (response.data !== "incorrect pin code") {
+                        setShowCheckPIN(false);
+                        setShowNewPass(true);
+                    } else {
+                        setInputTheme({ ...inputTheme, PIN: themeValue.error });
+                        setMassageWarning({ ...massageWarning, user_PIN: "incorrect PIN" });
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        } else {
+            setInputTheme({ ...inputTheme, PIN: themeValue.error });
+            setMassageWarning({ ...massageWarning, user_PIN: "Please enter PIN" });
+        }
+    }
+
+    function checkUserPIN(event) {
+        //Just 6 digit of number
+        const patternPIN = /^\d{6}$/;
+        const user_PIN = event.target.value;
+        if (user_PIN === '') {
+            setInputTheme({ ...inputTheme, PIN: themeValue.error });
+            setMassageWarning({ ...massageWarning, user_PIN: "This fild must not be empty" });
+        }
+        else if (!patternPIN.test(user_PIN)) {
+            setInputTheme({ ...inputTheme, PIN: themeValue.error });
+            setMassageWarning({ ...massageWarning, user_PIN: "Please enter 6 digit of number" })
+        }
+        else {
+            setMassageWarning({ ...massageWarning, user_PIN: '' });
+            setInputTheme({ ...inputTheme, PIN: themeValue.success });
+            setCheckPIN(user_PIN);
+            setCheckInput({ ...checkInput, PIN: true });
+        }
+    }
+
+    async function handleCheckEmail(event) {
+        event.preventDefault();
+        if (checkInput.check_email) {
+            await axios.post("http://localhost:5000/forgetPassword/sendPINCode", {
+                user_email: checkEmail,
+            })
+                .then(function (response) {
+                    if (response.data !== "User not found" && response.data !== "Unable to send verification code") {
+                        setShowCheckEmail(false);
+                        setShowCheckPIN(true);
+                    } else {
+                        setInputTheme({ ...inputTheme, check_email: themeValue.error });
+                        setMassageWarning({ ...massageWarning, check_email: "The email not found" });
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+    }
+
+    function handleNewPassword(event) {
+        // more than 8 characters, with at least 1 number, uppercase, and special characters.
+        const patternPassword = /^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,.?]).{8,}$/;
+        const user_password = event.target.value;
+        if (user_password === '') {
+            setInputTheme({ ...inputTheme, newPass: themeValue.error });
+            setMassageWarning({ ...massageWarning, newPass: "This fild must not be empty" });
+        }
+        else if (!patternPassword.test(user_password)) {
+            setInputTheme({ ...inputTheme, newPass: themeValue.error });
+            setMassageWarning({ ...massageWarning, newPass: "Please enter a password that is at least 8 characters long and contains one uppercase letter, one number, and one special character" })
+        }
+        else {
+            setMassageWarning({ ...massageWarning, newPass: '' });
+            setInputTheme({ ...inputTheme, newPass: themeValue.success });
+            setNewPass(user_password);
+            setCheckInput({ ...checkInput, newPass: true });
+        }
+    }
+
+    function handleConfirmPassword(event) {
+        const confirmPassword = event.target.value;
+        if (confirmPassword === '') {
+            setInputTheme({ ...inputTheme, confirmPassword: themeValue.error });
+            setMassageWarning({ ...massageWarning, confirmPassword: "This fild must not be empty" });
+        }
+        else if (confirmPassword !== newPass) {
+            setInputTheme({ ...inputTheme, confirmPassword: themeValue.error });
+            setMassageWarning({ ...massageWarning, confirmPassword: 'Password does not match' });
+        }
+        else {
+            setMassageWarning({ ...massageWarning, confirmPassword: '' });
+            setInputTheme({ ...inputTheme, confirmPassword: themeValue.success });
+            setCheckInput({ ...checkInput, confirmPassword: true });
+        }
+    }
+
+    async function handleNewPass(event) {
+        event.preventDefault();
+        if (checkInput.newPass && checkInput.confirmPassword) {
+            await axios.put("http://localhost:5000/forgetPassword/saveNewPassword", {
+                user_email: checkEmail,
+                user_password: newPass
+            })
+                .then(function (response) {
+                    if (response.data === "Password reset successfully") {
+                        setShowNewPass(false);
+                        Swal.fire({
+                            icon: "success",
+                            title: "Password reset successfully",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     }
 
     return (
@@ -149,41 +313,157 @@ function SignIn() {
                                 type="password"
                                 className={`w-full mt-2 px-3 py-2 bg-transparent outline-none border shadow-sm rounded-lg border-${inputTheme.user_password} text-${inputTheme.user_password}`} />
                         </div>
-                        <div>
-                            <div className="flex items-center justify-start text-sm">
-                                <button
-                                    className="text-center text-blue-500 hover:underline"
-                                    // onClick={handleButtonClick}
-                                >
-                                    Forgot password?
-                                </button>
+                        <div className="flex items-center justify-start text-sm">
+                            <div
+                                onClick={() => { setShowCheckEmail(true) }}
+                                className="text-center text-blue-500 hover:underline cursor-pointer">
+                                Forgot password?
                             </div>
                         </div>
-                        <button className="w-full rounded-lg border border-current px-6 py-2 font-normal border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:bg-blue-500 hover:text-black hover:shadow-lg hover:shadow-blue-500">
+                        <button
+                            type='submit'
+                            className="w-full rounded-lg border border-current px-6 py-2 font-normal border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:bg-blue-500 hover:text-black hover:shadow-lg hover:shadow-blue-500">
                             Sign in
                         </button>
                     </form>
-                    <button
-                        className="w-full flex items-center justify-center gap-x-3 py-2.5 text-sm font-medium rounded-lg border border-current md:text-sm border-blue-500 hover:border-blue-500 text-blue-500 transition hover:rotate-2 hover:scale-110 hover:text-black hover:shadow-lg hover:shadow-blue-500"
-                        id="customBtn">
-                        <svg className="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g clip-path="url(#clip0_17_40)">
-                                <path d="M47.532 24.5528C47.532 22.9214 47.3997 21.2811 47.1175 19.6761H24.48V28.9181H37.4434C36.9055 31.8988 35.177 34.5356 32.6461 36.2111V42.2078H40.3801C44.9217 38.0278 47.532 31.8547 47.532 24.5528Z" fill="#4285F4" />
-                                <path d="M24.48 48.0016C30.9529 48.0016 36.4116 45.8764 40.3888 42.2078L32.6549 36.2111C30.5031 37.675 27.7252 38.5039 24.4888 38.5039C18.2275 38.5039 12.9187 34.2798 11.0139 28.6006H3.03296V34.7825C7.10718 42.8868 15.4056 48.0016 24.48 48.0016Z" fill="#34A853" />
-                                <path d="M11.0051 28.6006C9.99973 25.6199 9.99973 22.3922 11.0051 19.4115V13.2296H3.03298C-0.371021 20.0112 -0.371021 28.0009 3.03298 34.7825L11.0051 28.6006Z" fill="#FBBC04" />
-                                <path d="M24.48 9.49932C27.9016 9.44641 31.2086 10.7339 33.6866 13.0973L40.5387 6.24523C36.2 2.17101 30.4414 -0.068932 24.48 0.00161733C15.4055 0.00161733 7.10718 5.11644 3.03296 13.2296L11.005 19.4115C12.901 13.7235 18.2187 9.49932 24.48 9.49932Z" fill="#EA4335" />
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_17_40">
-                                    <rect width="48" height="48" fill="white" />
-                                </clipPath>
-                            </defs>
-                        </svg>
-                        Continue with Google
-                    </button>
+                    <Goolge />
                     <p className="text-center">Don't have an account? <Link to="/signUp" className="font-medium text-blue-500 hover:underline">Sign up</Link></p>
                 </div>
             </main>
+            {showCheckEmail && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black backdrop-blur-sm bg-opacity-50 z-50">
+                    <div className="bg-white p-8 rounded-lg shadow-md z-50 max-w-md w-full">
+                        <h2 className="text-2xl font-bold mb-4 text-left">
+                            Check email
+                        </h2>
+                        <form onSubmit={(event) => handleCheckEmail(event)}>
+                            <div>
+                                <label className={`font-medium text-${inputTheme.check_email}`} htmlFor='cEmail'>
+                                    Email <span className='text-red-700 text-xl'>*</span>
+                                </label>
+                                <p className={`mt-2 text-sm text-${themeValue.error}`}>
+                                    {massageWarning.check_email}
+                                </p>
+                                <input
+                                    onBlur={(event) => checkUserEmail(event)}
+                                    id='cEmail'
+                                    placeholder='Enter your email . . .'
+                                    type="email"
+                                    className={`w-full mt-2 px-3 py-2 bg-transparent outline-none border shadow-sm rounded-lg border-${inputTheme.check_email} text-${inputTheme.check_email}`} />
+                            </div>
+                            <div className="flex items-center justify-between mt-4">
+                                <button
+                                    className="rounded-lg border border-blue-500 px-8 py-3 text-sm font-medium text-blue-500 transition hover:rotate-2 hover:scale-110 outline-none ring-0 hover:bg-blue-500 hover:text-white">
+                                    Send email
+                                </button>
+                                <button
+                                    onClick={() => setShowCheckEmail(false)}
+                                    className="rounded-lg border border-red-500 px-8 py-3 text-sm font-medium text-red-500 transition hover:rotate-2 hover:scale-110 outline-none ring-0 hover:bg-red-500 hover:text-white">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+            {showCheckPIN && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black backdrop-blur-sm bg-opacity-50 z-50">
+                    <div className="bg-white p-8 rounded-lg shadow-md z-50 max-w-md w-full">
+                        <h2 className="text-2xl font-bold mb-4 text-left">
+                            We sent a PIN to your email please enter the PIN
+                        </h2>
+                        <form onSubmit={(event) => handleCheckPIN(event)}>
+                            <div>
+                                <label className={`font-medium text-black`}>
+                                    Your email
+                                </label>
+                                <input
+                                    type="email"
+                                    readOnly
+                                    value={checkEmail}
+                                    className={`w-full mt-2 px-3 py-2 bg-gray-300 outline-none border shadow-sm rounded-lg border-black text-black`} />
+                            </div>
+                            <div className='mt-3'>
+                                <label className={`font-medium text-${inputTheme.PIN}`} htmlFor='PIN'>
+                                    PIN <span className='text-red-700 text-xl'>*</span>
+                                </label>
+                                <p className={`mb-2 text-sm text-${themeValue.error}`}>
+                                    {massageWarning.user_PIN}
+                                </p>
+                                <input
+                                    onBlur={(event) => checkUserPIN(event)}
+                                    id='PIN'
+                                    placeholder='Enter your PIN . . .'
+                                    type="text"
+                                    className={`w-full px-3 py-2 bg-transparent outline-none border shadow-sm rounded-lg border-${inputTheme.PIN} text-${inputTheme.PIN}`} />
+                            </div>
+                            <div className="flex items-center justify-between mt-4">
+                                <button
+                                    className="rounded-lg border border-blue-500 px-8 py-3 text-sm font-medium text-blue-500 transition hover:rotate-2 hover:scale-110 outline-none ring-0 hover:bg-blue-500 hover:text-white">
+                                    Send PIN
+                                </button>
+                                <button
+                                    onClick={() => setShowCheckPIN(false)}
+                                    className="rounded-lg border border-red-500 px-8 py-3 text-sm font-medium text-red-500 transition hover:rotate-2 hover:scale-110 outline-none ring-0 hover:bg-red-500 hover:text-white">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+            {showNewPass && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black backdrop-blur-sm bg-opacity-50 z-50">
+                    <div className="bg-white p-8 rounded-lg shadow-md z-50 max-w-md w-full">
+                        <h2 className="text-2xl font-bold mb-4 text-left">
+                            New password
+                        </h2>
+                        <form onSubmit={(event) => handleNewPass(event)}>
+                            <div>
+                                <label className={`font-medium text-${inputTheme.newPass}`} htmlFor='newPass'>
+                                    Enter new Password <span className='text-red-700 text-xl'>*</span>
+                                </label>
+                                <p className={`mt-2 text-sm text-${themeValue.error}`}>
+                                    {massageWarning.newPass}
+                                </p>
+                                <input
+                                    onBlur={(event) => handleNewPassword(event)}
+                                    id='newPass'
+                                    placeholder='*********'
+                                    type="password"
+                                    required
+                                    className={`w-full mt-2 px-3 py-2 bg-transparent outline-none border shadow-sm rounded-lg border-${inputTheme.newPass} text-${inputTheme.newPass}`} />
+                            </div>
+                            <div>
+                                <label className={`font-medium text-${inputTheme.confirmPassword}`} htmlFor='Confirm'>
+                                    Confirm password <span className='text-red-700 text-xl'>*</span>
+                                </label>
+                                <p className={`mt-2 text-sm text-${themeValue.error}`}>
+                                    {massageWarning.confirmPassword}
+                                </p>
+                                <input
+                                    onChange={(event) => handleConfirmPassword(event)}
+                                    id='Confirm'
+                                    placeholder='*********'
+                                    type="password"
+                                    required
+                                    className={`w-full mt-2 px-3 py-2 bg-transparent outline-none border shadow-sm rounded-lg border-${inputTheme.confirmPassword} text-${inputTheme.confirmPassword}`} />
+                            </div>
+                            <div className="flex items-center justify-between mt-4">
+                                <button
+                                    className="rounded-lg border border-blue-500 px-8 py-3 text-sm font-medium text-blue-500 transition hover:rotate-2 hover:scale-110 outline-none ring-0 hover:bg-blue-500 hover:text-white">
+                                    Reset Password
+                                </button>
+                                <button
+                                    onClick={() => setShowNewPass(false)}
+                                    className="rounded-lg border border-red-500 px-8 py-3 text-sm font-medium text-red-500 transition hover:rotate-2 hover:scale-110 outline-none ring-0 hover:bg-red-500 hover:text-white">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
