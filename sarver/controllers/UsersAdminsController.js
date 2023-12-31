@@ -58,9 +58,9 @@ const AddNewUSer = async (req, res) => {
 
 const AddNewUSerWithgoogle = async (req, res) => {
     try {
-        const user_name = req.body.name, user_email = req.body.email, user_image = req.body.picture;
-        const IsEmailAlreadyExists = await pool.query("SELECT * FROM users_and_admins where user_email = $1",
-            [user_email]);
+        const user_name = req.body.name, user_email = req.body.email;
+        const IsEmailAlreadyExists = await pool.query("SELECT * FROM users_and_admins where user_email = $1 AND user_flags = $2",
+            [user_email, 0]);
         if (IsEmailAlreadyExists.rows.length !== 0) {
             const { user_id, user_type, user_name, user_phone, user_email, user_password, user_image } = IsEmailAlreadyExists.rows[0];
             const token = tokenGenerator({
@@ -95,6 +95,7 @@ const AddNewUSerWithgoogle = async (req, res) => {
             );
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
@@ -274,17 +275,14 @@ const sendPINCode = async (req, res) => {
         const user = await pool.query('SELECT * FROM users_and_admins WHERE user_email = $1 AND user_flags = 0', [user_email]);
         if (user.rows.length !== 0) {
             const verificationCode = Math.floor(100000 + Math.random() * 900000);
-            console.log(verificationCode);
             const updateUserForgotPassword = await pool.query("UPDATE users_and_admins SET user_forgot_password = $1 WHERE user_email = $2 RETURNING *",
                 [verificationCode, user_email]);
-
             const mailOptions = {
                 from: SENDING_EMAIL,
                 to: user_email,
                 subject: 'Email Verification Code',
                 text: `Your verification code is: ${verificationCode}`,
             };
-
             transporter.sendMail(mailOptions, (error) => {
                 if (error) {
                     return res.json("Unable to send verification code");

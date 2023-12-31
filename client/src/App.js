@@ -11,12 +11,16 @@ import SignUp from './pages/SignUp';
 import Footer from "./components/Footer";
 import NotFound from './pages/NotFound';
 
+if (localStorage.length === 0 || localStorage.getItem("token") === null || localStorage.getItem("token") === undefined) {
+  localStorage.setItem("token", []);
+}
+
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem("token") !== null) {
+    if (localStorage.getItem("token") !== "") {
         setIsLoggedIn(true);
     }
   }, []);

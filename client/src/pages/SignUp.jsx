@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Logo from "../assets/image/Logo.png";
-import Goolge from '../components/Goolge';
+import Google from '../components/Google';
 
 function SignUp() {
 
@@ -265,7 +265,7 @@ function SignUp() {
           </button>
         </form>
         <div className="mt-5">
-          <Goolge/>
+          <Google/>
         </div>
       </div>
 

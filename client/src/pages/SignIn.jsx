@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Logo from "../assets/image/Logo.png";
-import Goolge from '../components/Goolge';
+import Google from '../components/Google';
 import Swal from 'sweetalert2';
 
 function SignIn() {
@@ -326,7 +326,7 @@ function SignIn() {
                             Sign in
                         </button>
                     </form>
-                    <Goolge />
+                    <Google />
                     <p className="text-center">Don't have an account? <Link to="/signUp" className="font-medium text-blue-500 hover:underline">Sign up</Link></p>
                 </div>
             </main>

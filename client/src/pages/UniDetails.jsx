@@ -19,6 +19,16 @@ function UniDetails() {
         window.scrollTo(0, 0);
     }, []);
 
+    const formatDepartureTime = (departureTime) => {
+        const parsedTime = new Date(`1970-01-01T${departureTime}`);
+        const hours = parsedTime.getHours();
+        const minutes = parsedTime.getMinutes();
+        const formattedTime = hours > 12 ?
+            `${hours - 12}:${minutes.toString().padStart(2, '0')} PM`
+            : `${hours}:${minutes.toString().padStart(2, '0')} AM`;
+        return formattedTime;
+    };
+
     useEffect(() => {
         const unisData = async () => {
             try {
@@ -144,7 +154,15 @@ function UniDetails() {
                                     </clipPath>
                                 </defs>
                             </svg>
-                            <p className="text-black">Bus no {idx + 1}: Stopping place {item.starting_place} And the departure time is {item.departure_time}</p>
+                            <p className="text-black">
+                                Bus no {idx + 1}: Stopping place {item.starting_place}{' '}
+                                {item.departure_time && (
+                                    <>
+                                        And the departure time is{' '}
+                                        {formatDepartureTime(item.departure_time)}
+                                    </>
+                                )}
+                            </p>
                         </div>
                     ))
                 }
