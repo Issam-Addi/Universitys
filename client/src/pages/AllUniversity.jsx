@@ -4,18 +4,21 @@ import { Link } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import axios from "axios";
 import UniHero from "../assets/image/UniHero.png"
+import ReactPaginate from 'react-paginate';
 
 function AllUniversity() {
 
     const [unis, setUnis] = useState([]);
     const [filterData, setFilterData] = useState([]);
+    const [pageCount, setPageCount] = useState('');
 
     useEffect(() => {
         const unisData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/unisData');
-                setUnis(response.data);
-                setFilterData(response.data);
+                const response = await axios.get('http://localhost:5000/unisData?p=1');
+                setUnis(response.data[1]);
+                setFilterData(response.data[1]);
+                setPageCount(response.data[0]);
             }
             catch (error) {
                 console.error('Error fetching data:', error);
@@ -33,6 +36,20 @@ function AllUniversity() {
             item.university_name.toLowerCase().includes(search.toLowerCase())
         );
         setFilterData(filtered);
+    }
+
+
+    async function handlePageClick(event) {
+        const currentPage = event.selected + 1;
+        try {
+            const response = await axios.get(`http://localhost:5000/unisData?p=${currentPage}`);
+            setUnis(response.data[1]);
+            setFilterData(response.data[1]);
+            setPageCount(response.data[0]);
+        }
+        catch (error) {
+            console.error('Error fetching data:', error);
+        }
     }
 
     return (
@@ -91,7 +108,6 @@ function AllUniversity() {
                                             key={idx}
                                             className="transition hover:rotate-2 hover:scale-110 hover:shadow-xl rounded-lg">
                                             <div className="border border-blue-500 px-1 rounded-lg">
-
                                                 <img
                                                     src={item.university_image1}
                                                     alt={`${item.university_name} university`}
@@ -101,16 +117,28 @@ function AllUniversity() {
                                                         <h2 className="text-3xl">{item.university_name}</h2>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </Link>
                                     ))}
                             </div>
                         )}
+                        <ReactPaginate
+                            breakLabel="..."
+                            nextLabel=">"
+                            onPageChange={handlePageClick}
+                            pageRangeDisplayed={3}
+                            pageCount={pageCount}
+                            previousLabel="<"
+                            renderOnZeroPageCount={null}
+                            marginPagesDisplayed={2}
+                            containerClassName="flex justify-center mt-4 text-xl"
+                            pageClassName="mx-1 flex items-center justify-center px-3 py-1 hover:text-blue-500 transition duration-150"
+                            previousClassName="mx-2 flex items-center justify-center px-3 py-1 hover:text-blue-500 transition duration-150"
+                            nextClassName="mx-2 flex items-center justify-center px-3 py-1 hover:text-blue-500 transition duration-150"
+                            activeClassName="text-blue-500"/>
                     </div>
                 </div>
             </section>
-
         </div>
     );
 };

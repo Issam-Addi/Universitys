@@ -21,9 +21,9 @@ function Static() {
             })
             .catch((error) => console.log(error.message))
 
-        axios.get('http://localhost:5000/unisData')
+        axios.get('http://localhost:5000/countUnisData')
             .then((response) => {
-                setUnisData(response.data);
+                setUnisData(response.data[0].count);
             })
             .catch((error) => console.log(error.message))
 
@@ -85,7 +85,7 @@ function Static() {
                             Total Universitys
                         </p>
                         <h4 className="text-xl font-bold text-blue-500">
-                            {unisData?.length}
+                            {unisData}
                         </h4>
                     </div>
                 </div>

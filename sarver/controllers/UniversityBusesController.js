@@ -2,12 +2,32 @@ const pool = require("../models/DB");
 
 const unisData = async (req, res) => {
     try {
-        const unisData = await pool.query("SELECT university_id, university_name, university_image1, university_email, university_phone FROM university_data ORDER BY university_id ASC");
+        const pageNo = req.query.p || 1;
+        const UniversitysPerPage = 9;
+        const offset = (pageNo - 1) * UniversitysPerPage;
+        const unisDataResult = await pool.query("SELECT university_id, university_name, university_image1, university_email, university_phone FROM university_data ORDER BY university_id ASC OFFSET $1 LIMIT $2", [+offset, +UniversitysPerPage]);
+        const allUnis = unisDataResult.rows;
+        const totalUniversitysResult = await pool.query("SELECT COUNT(*) AS COUNT FROM university_data");
+        const numberOffUniversitys = totalUniversitysResult.rows[0]?.count;
+        const totalPages = Math.ceil(+numberOffUniversitys / UniversitysPerPage);
+        res.json([
+            totalPages,
+            allUnis
+        ]);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+const countUnisData = async (req, res) => {
+    try {
+        const unisData = await pool.query("SELECT COUNT(*) FROM university_data");
         res.json(unisData.rows);
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 
 const uniData = async (req, res) => {
     try {
@@ -33,6 +53,15 @@ const updataUniData = async (req, res) => {
     }
 }
 
+const allUnisData = async (req, res) => {
+    try {
+        const unisData = await pool.query("SELECT university_id, university_name, university_image1, university_email, university_phone FROM university_data ORDER BY university_id ASC");
+        res.json(unisData.rows);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 const uniStreetData = async (req, res) => {
     try {
         const { university_id } = req.params;
@@ -48,7 +77,7 @@ const addStreetData = async (req, res) => {
     try {
         const { university_id, starting_place, departure_time } = req.body;
         await pool.query("INSERT INTO street_data (university_id, starting_place, departure_time ) VALUES ($1, $2, $3) RETURNING *",
-        [university_id, starting_place, departure_time]);
+            [university_id, starting_place, departure_time]);
         res.send("Added Successfully");
     } catch (error) {
         console.log(error);
@@ -60,7 +89,7 @@ const addUniData = async (req, res) => {
     try {
         const { university_name, university_description, university_email, university_location, number_of_majors, university_phone, university_image, university_image1 } = req.body;
         await pool.query("INSERT INTO university_data ( university_name, university_description, university_email, university_location, number_of_majors, university_phone, university_image, university_image1 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-        [university_name, university_description, university_email, university_location, number_of_majors, university_phone, university_image, university_image1]);
+            [university_name, university_description, university_email, university_location, number_of_majors, university_phone, university_image, university_image1]);
         res.send("Added Successfully");
     } catch (error) {
         console.log(error);
@@ -73,7 +102,7 @@ const editStreetData = async (req, res) => {
         const { street_id } = req.params;
         const { university_id, starting_place, departure_time } = req.body;
         await pool.query("UPDATE street_data Set starting_place = $1, departure_time = $2 WHERE street_id = $3 AND university_id = $4",
-        [starting_place, departure_time, street_id, university_id]);
+            [starting_place, departure_time, street_id, university_id]);
         res.send("Updated Successfully");
     } catch (error) {
         console.log(error);
@@ -83,6 +112,8 @@ const editStreetData = async (req, res) => {
 
 module.exports = {
     unisData,
+    countUnisData,
+    allUnisData,
     uniData,
     updataUniData,
     uniStreetData,

@@ -12,7 +12,7 @@ function Landing() {
     useEffect(() => {
         const unisData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/unisData');
+                const response = await axios.get('http://localhost:5000/allUnisData');
                 setUnis(response.data);
             }
             catch (error) {

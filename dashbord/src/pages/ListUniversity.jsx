@@ -20,7 +20,7 @@ function ListUniversity() {
     const [add, setAdd] = useState(false);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/unisData')
+        axios.get('http://localhost:5000/allUnisData')
             .then((response) => {
                 setAllUnis(response.data);
                 setFilterData(response.data);

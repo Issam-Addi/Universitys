@@ -3,6 +3,8 @@ const router = express.Router();
 const UniversityBusesController = require("../controllers/UniversityBusesController")
 
 router.get("/unisData", UniversityBusesController.unisData);
+router.get("/countUnisData", UniversityBusesController.countUnisData);
+router.get("/allUnisData", UniversityBusesController.allUnisData);
 router.get("/uniData/:university_id", UniversityBusesController.uniData);
 router.put("/updataUniData/:university_id", UniversityBusesController.updataUniData);
 router.get("/uniStreetData/:university_id", UniversityBusesController.uniStreetData);
